@@ -33,10 +33,15 @@ public class ClientFormController {
     }
 
     private void sendToTelegram(ClientForm clientForm) {
-        String botToken = "7219282300:AAHDD4jTn0YdsonIy8oiONXcY2xGnqWFhCk";
-        String chatId = "-1002489272611";
+        String botToken = "7219282300:AAGgptkOSx6J4dpNGe6TgQPlNiY_2sLs6jc";
+        String chatId = "-1002442792451";
+
         String message = String.format(
-                "Новая заявка от клиента:\nИмя: %s %s\nEmail: %s\nТелефон: %s\nОписание: %s",
+                "Новая заявка от клиента:\n" +
+                        "Имя: %s %s\n" +
+                        "Email: %s\n" +
+                        "Телефон: %s\n" +
+                        "Описание: %s",
                 clientForm.getFirstName(),
                 clientForm.getLastName(),
                 clientForm.getEmail(),
@@ -44,13 +49,18 @@ public class ClientFormController {
                 clientForm.getDescription()
         );
 
-        String encodedMessage = UriUtils.encode(message, StandardCharsets.UTF_8);
         String url = String.format(
                 "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s",
-                botToken, chatId, encodedMessage);
+                botToken, chatId, message
+        );
 
         RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(url, String.class);
-        System.out.println(response);
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            System.out.println("Response from Telegram API: " + response);
+        } catch (Exception e) {
+            System.err.println("Failed to send message to Telegram: " + e.getMessage());
+            throw new RuntimeException("Ошибка при отправке сообщения в Telegram", e);
+        }
     }
 }

@@ -17,7 +17,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Копируем собранный jar-файл из предыдущего этапа сборки
-COPY --from=build /app/build/libs/LandingPage-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/build/libs/demo1-0.0.1-SNAPSHOT.jar app.jar
 
 # Открываем порт, который использует приложение
 EXPOSE 8085

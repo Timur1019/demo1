@@ -1,26 +1,18 @@
-# Первый этап: сборка jar-файла
+# Первый этап: сборка jar-файла с Gradle
 FROM gradle:jdk17 AS build
-
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы проекта в контейнер
-COPY src/main/java/com/example/demo .
+# Копируем Gradle файлы и исходный код в контейнер
+COPY build.gradle settings.gradle /app/
+COPY src /app/src
 
-# Выполняем сборку jar-файла
+# Собираем jar-файл
 RUN gradle bootJar --no-daemon
 
-# Второй этап: создание финального образа
+# Второй этап: создание финального образа с OpenJDK
 FROM openjdk:17-jdk-slim
-
-# Устанавливаем рабочую директорию
 WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
 
-# Копируем собранный jar-файл из предыдущего этапа сборки
-COPY --from=build /app/build/libs/demo1-0.0.1-SNAPSHOT.jar app.jar
-
-# Открываем порт, который использует приложение
-EXPOSE 8085
-
-# Запускаем Spring Boot приложение
+# Запускаем приложение
 ENTRYPOINT ["java", "-jar", "app.jar"]
